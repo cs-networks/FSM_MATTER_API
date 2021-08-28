@@ -1,0 +1,37 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "API Title",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.server.test/v1"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "MatterResponse": {
+        "$ref": "./schemas/matter_schema.json#/components/schemas/MatterResponse"
+      },
+      "MatterProperties": {
+        "$ref": "./schemas/matter_schema.json#/components/schemas/MatterProperties"
+      },
+      "Entity": {
+        "$ref": "./schemas/sirens_schema.json#/components/schemas/Entity"
+      },
+      "Action": {
+        "$ref": "./schemas/sirens_schema.json#/components/schemas/Action"
+      },
+      "Field": {
+        "$ref": "./schemas/sirens_schema.json#/components/schemas/Field"
+      },
+      "Link": {
+        "$ref": "./schemas/sirens_schema.json#/components/schemas/Link"
+      }
+    }
+  },
+  "paths": {
+    "$ref": "./paths/fsm_swagger_spec_path_matter.json"    
+  }
+}

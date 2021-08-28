@@ -1,0 +1,584 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "API Title",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.server.test/v1"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "MatterResponse": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Entity"
+          },
+          {
+            "properties": {
+              "properties": {
+                "$ref": "#/components/schemas/MatterProperties"
+              }
+            }
+          }
+        ]
+      },
+      "MatterProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "state"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "solid",
+              "liquid",
+              "gas",
+              "plasma"
+            ]
+          },
+          "temperatur": {
+            "type": "number"
+          },
+          "pressure": {
+            "type": "number"
+          }
+        }
+      },
+      "Entity": {
+        "type": "object",
+        "properties": {
+          "class": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Action"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "Action": {
+        "type": "object",
+        "required": [
+          "name",
+          "href"
+        ],
+        "properties": {
+          "class": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Field"
+            }
+          }
+        }
+      },
+      "Field": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "hidden",
+              "text",
+              "search",
+              "tel",
+              "url",
+              "email",
+              "password",
+              "datetime",
+              "date",
+              "month",
+              "week",
+              "time",
+              "datetime-local",
+              "number",
+              "range",
+              "color",
+              "checkbox",
+              "radio",
+              "file"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "Link": {
+        "type": "object",
+        "required": [
+          "rel",
+          "href"
+        ],
+        "properties": {
+          "class": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "title": {
+            "type": "string"
+          },
+          "rel": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "href": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/matter": {
+      "post": {
+        "summary": "Add a new State Machine to the pool",
+        "description": "",
+        "operationId": "addMatter",
+        "tags": [
+          "FSM"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MatterProperties"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Matter object inserted"
+          },
+          "405": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/matter/{matterId}": {
+      "get": {
+        "summary": "Info for a specific Matter object",
+        "operationId": "getById",
+        "tags": [
+          "FSM"
+        ],
+        "parameters": [
+          {
+            "name": "matterId",
+            "in": "path",
+            "required": true,
+            "description": "The id of the Matter object to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Expected response to a valid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Matter object not found"
+          }
+        }
+      }
+    },
+    "/matter/{matterId}/melt": {
+      "get": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Trigger transition melt",
+        "description": "Advances the FSM",
+        "operationId": "do_melt",
+        "parameters": [
+          {
+            "name": "matterId",
+            "in": "path",
+            "required": true,
+            "description": "The id of the Matter object to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid transition supplied",
+            "content": {}
+          },
+          "404": {
+            "description": "Transition not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/matter/{matterId}/freez": {
+      "get": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Trigger transition freez",
+        "description": "Advances the FSM",
+        "operationId": "do_freez",
+        "parameters": [
+          {
+            "name": "matterId",
+            "in": "path",
+            "required": true,
+            "description": "The id of the Matter object to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid transition supplied",
+            "content": {}
+          },
+          "404": {
+            "description": "Transition not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/matter/{matterId}/evaporate": {
+      "get": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Trigger transition evaporate",
+        "description": "Advances the FSM",
+        "operationId": "do_evaporate",
+        "parameters": [
+          {
+            "name": "matterId",
+            "in": "path",
+            "required": true,
+            "description": "The id of the Matter object to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid transition supplied",
+            "content": {}
+          },
+          "404": {
+            "description": "Transition not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/matter/{matterId}/condensate": {
+      "get": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Trigger transition condensate",
+        "description": "Advances the FSM",
+        "operationId": "do_condensate",
+        "parameters": [
+          {
+            "name": "matterId",
+            "in": "path",
+            "required": true,
+            "description": "The id of the Matter object to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid transition supplied",
+            "content": {}
+          },
+          "404": {
+            "description": "Transition not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/matter/{matterId}/sublimate": {
+      "get": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Trigger transition sublimate",
+        "description": "Advances the FSM",
+        "operationId": "do_sublimate",
+        "parameters": [
+          {
+            "name": "matterId",
+            "in": "path",
+            "required": true,
+            "description": "The id of the Matter object to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid transition supplied",
+            "content": {}
+          },
+          "404": {
+            "description": "Transition not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/matter/{matterId}/deposit": {
+      "get": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Trigger transition deposit",
+        "description": "Advances the FSM",
+        "operationId": "do_deposit",
+        "parameters": [
+          {
+            "name": "matterId",
+            "in": "path",
+            "required": true,
+            "description": "The id of the Matter object to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid transition supplied",
+            "content": {}
+          },
+          "404": {
+            "description": "Transition not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/matter/{matterId}/ionize": {
+      "get": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Trigger transition ionize",
+        "description": "Advances the FSM",
+        "operationId": "do_ionize",
+        "parameters": [
+          {
+            "name": "matterId",
+            "in": "path",
+            "required": true,
+            "description": "The id of the Matter object to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid transition supplied",
+            "content": {}
+          },
+          "404": {
+            "description": "Transition not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/matter/{matterId}/deionize": {
+      "get": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Trigger transition deionize",
+        "description": "Advances the FSM",
+        "operationId": "do_deionize",
+        "parameters": [
+          {
+            "name": "matterId",
+            "in": "path",
+            "required": true,
+            "description": "The id of the Matter object to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid transition supplied",
+            "content": {}
+          },
+          "404": {
+            "description": "Transition not found",
+            "content": {}
+          }
+        }
+      }
+    }
+  }
+}

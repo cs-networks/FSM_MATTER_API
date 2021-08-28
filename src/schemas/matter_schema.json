@@ -1,0 +1,48 @@
+{
+  "components": {
+    "schemas": {
+      "MatterResponse": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "./sirens_schema.json#/components/schemas/Entity"
+          },
+          {
+            "properties": {
+              "properties": {
+                "$ref": "#/components/schemas/MatterProperties"
+              }
+            }
+          }
+        ]
+      },
+      "MatterProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id", "state"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+                "solid",
+                "liquid",
+                "gas",
+                "plasma"
+              ]
+          },
+          "temperatur": {
+            "type": "number"
+          },
+          "pressure": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  }
+}

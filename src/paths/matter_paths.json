@@ -1,0 +1,18 @@
+{
+    "get": {
+        "description": "State of the Matter FSM",
+        "parameters": [],
+        "responses": {
+            "200": {
+                "description": "OK",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "../schemas/matter_schema.json#/components/schemas/MatterResponse"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
